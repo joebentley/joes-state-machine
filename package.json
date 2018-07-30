@@ -8,5 +8,6 @@
   },
   "scripts": {
     "test": "mocha tests"
-  }
+  },
+  "homepage": "https://github.com/joebentley/joes-state-machine"
 }
