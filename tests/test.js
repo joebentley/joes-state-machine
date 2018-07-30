@@ -1,5 +1,15 @@
 const assert = require('assert');
-const {StateMachine, ns, nt, newStateMachine} = require('..');
+const {StateMachine, newState, ns, newTransition, nt, newStateMachine} = require('..');
+
+let mockConsole = class {
+  constructor() {
+    this.logged = [];
+  }
+
+  log(string) {
+    this.logged.push(string);
+  }
+};
 
 describe('StateMachine', () => {
   it('should throw exception if a bad config is given', () => {
@@ -108,5 +118,79 @@ describe('StateMachine', () => {
 
     sm.goto('a');
     assert(a === 3);
+  });
+
+  it('should run code example correctly', () => {
+    let console = new mockConsole();
+
+    let cat = new StateMachine({
+      states: [
+        newState('sleepy', () => console.log('The cat fell asleep'), () => console.log('The cat was no longer asleep!')),
+        newState('awake', () => console.log('The cat woke up!'))
+      ],
+      transitions: [
+        newTransition('sleepy', 'awake', () => console.log('The cat transitioned from asleep to awake'))
+      ],
+      initialState: 'sleepy',
+      initialOnEnter: true // Trigger the initial onEntry callback for the sleepy state on object construction
+    });
+
+    cat.goto('awake');
+
+    assert(
+      console.logged[0] === 'The cat fell asleep' &&
+      console.logged[1] === 'The cat was no longer asleep!' &&
+      console.logged[2] === 'The cat transitioned from asleep to awake' &&
+      console.logged[3] === 'The cat woke up!'
+    );
+  });
+
+  it('should run alternative initialisation code example correctly', () => {
+    let console = new mockConsole();
+
+    let cat = new StateMachine({
+      states: [
+        newState('sleepy', () => console.log('The cat fell asleep'), () => console.log('The cat was no longer asleep!')),
+        newState('awake', () => console.log('The cat woke up!'))
+      ],
+      transitions: [
+        newTransition('sleepy', 'awake', () => console.log('The cat transitioned from asleep to awake'))
+      ]
+    });
+
+    cat.goto('sleepy'); // 'The cat fell asleep'...
+    cat.goto('awake'); // will trigger the other callbacks
+
+    assert(
+      console.logged[0] === 'The cat fell asleep' &&
+      console.logged[1] === 'The cat was no longer asleep!' &&
+      console.logged[2] === 'The cat transitioned from asleep to awake' &&
+      console.logged[3] === 'The cat woke up!'
+    );
+  });
+
+  it('should run shorthand code example correctly', () => {
+    let console = new mockConsole();
+
+    let cat = newStateMachine(
+      [
+        ns('sleepy', () => console.log('The cat fell asleep'), () => console.log('The cat was no longer asleep!')),
+        ns('awake', () => console.log('The cat woke up!'))
+      ],
+      [
+        nt('sleepy', 'awake', () => console.log('The cat transitioned from asleep to awake'))
+      ],
+      'sleepy',
+      true // Trigger the initial onEntry callback for the sleepy state on object construction
+    );
+
+    cat.goto('awake');
+
+    assert(
+      console.logged[0] === 'The cat fell asleep' &&
+      console.logged[1] === 'The cat was no longer asleep!' &&
+      console.logged[2] === 'The cat transitioned from asleep to awake' &&
+      console.logged[3] === 'The cat woke up!'
+    );
   });
 });
