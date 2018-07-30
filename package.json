@@ -9,5 +9,7 @@
   "scripts": {
     "test": "mocha tests"
   },
-  "homepage": "https://github.com/joebentley/joes-state-machine"
+  "homepage": "https://github.com/joebentley/joes-state-machine",
+  "author": "Joe Bentley",
+  "keywords": ["State machine"]
 }
