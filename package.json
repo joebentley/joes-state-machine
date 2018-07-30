@@ -1,0 +1,12 @@
+{
+  "name": "joes-state-machine",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "scripts": {
+    "test": "mocha tests"
+  }
+}
