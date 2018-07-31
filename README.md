@@ -1,5 +1,7 @@
 # Joe's State Machine
 
+A simple, easy, and versatile state machine
+
 ```javascript
 const {StateMachine, newState, newTransition} = require('joes-state-machine');
 
